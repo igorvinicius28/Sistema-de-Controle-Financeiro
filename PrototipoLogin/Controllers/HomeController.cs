@@ -12,34 +12,37 @@ namespace PrototipoLogin.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        private static ServicoDeMovimentacaoImpl _servicoMovimentacao;
+        private static ServicoDeContasImpl _servicoContas;
 
-
+        public HomeController()
+        {
+            CrieRepositorios();
+        }
 
         [Authorize]
         public ActionResult Index()
         {
-            var servico = new ServicoDeMovimentacaoImpl(new RepositorioMovimentacoes());
-            var servicoContas = new ServicoDeContasImpl(new RepositorioContas());
 
-            var listaMovimentacoes = servico.ConsulteLista();
-            var listaContas = servicoContas.ConsulteLista();
+            var listaMovimentacoes = _servicoMovimentacao.ConsulteLista();
+            var listaContas = _servicoContas.ConsulteLista();
 
             var valorEntrada = ObtenhaMovimentacoesEContasEntrada(listaMovimentacoes, listaContas);
             var valorDespesa = ObtenhaMovimentacoesEContasSaida(listaMovimentacoes, listaContas);
             var valorTotal = ObtenhaSaldoAtual(listaMovimentacoes, listaContas);
             
-            var valoresJaneiro = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 1);
-            var valoresFevereiro = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 2);
-            var valoresMarco = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 3);
-            var valoresAbril = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 4);
-            var valoresMaio = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 5);
-            var valoresjunho = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 6);
-            var valoresJulho = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 7);
-            var valoresAgosto = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 8);
-            var valoresSetembro = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 9);
-            var valoresOutubro = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 10);
-            var valoresNovembro = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 11);
-            var valoresDezembro = servico.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 12);
+            var valoresJaneiro = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 1);
+            var valoresFevereiro = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 2);
+            var valoresMarco = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 3);
+            var valoresAbril = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 4);
+            var valoresMaio = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 5);
+            var valoresjunho = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 6);
+            var valoresJulho = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 7);
+            var valoresAgosto = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 8);
+            var valoresSetembro = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 9);
+            var valoresOutubro = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 10);
+            var valoresNovembro = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 11);
+            var valoresDezembro = _servicoMovimentacao.ObtenhaValoresTotalPorMes(listaMovimentacoes, listaContas, 12);
 
 
             var dtoMenuPrincipal = new DtoMenuPrincipal
@@ -113,7 +116,8 @@ namespace PrototipoLogin.Controllers
 
         private void CrieRepositorios()
         {
-
+            _servicoMovimentacao = _servicoMovimentacao ?? new ServicoDeMovimentacaoImpl(new RepositorioMovimentacoes());
+            _servicoContas = _servicoContas ?? new ServicoDeContasImpl(new RepositorioContas());
         }
     }
 }
