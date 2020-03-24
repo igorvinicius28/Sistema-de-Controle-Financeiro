@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Confirmar E-mail";
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link href="~/Content/Confirm/fcmoney.confirmacaoEmail.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/Home/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="signup">
+        <div class="signup__status-box">
+            <h3 class="signup__status-title mb-3">E-mail confirmado com sucesso.</h3>
+
+            <p class="mb-5 text-center text-gray">
+                Obrigado por confirmar seu e-mail.
+            </p>
+
+            <a class="btn btn-primary btn-user btn-block" href="@Url.Action("Login", "Autenticacao")">Ok, Ir para a tela de login</a>
+        </div>
+    </div>
+
+</body>
+</html>
+
+<h2>@ViewBag.Title.</h2>
+<div>
+    <p>
+        Obrigado por confirmar seu e-mail. Por favor @Html.ActionLink("Clique aqui para Login", "Login", "Autenticacao", routeValues: null, htmlAttributes: new { id = "loginLink" })
+    </p>
+</div>

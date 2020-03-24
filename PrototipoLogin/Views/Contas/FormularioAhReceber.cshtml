@@ -1,0 +1,46 @@
+﻿
+@model PrototipoLogin.Models.Contas.DtoContasAPagarReceber
+
+@Html.AntiForgeryToken()
+
+<div id="message"></div>
+
+<form id="frmCliente">
+    <div class="form-horizontal">
+        @Html.Hidden("Id", Model.Id)
+        @Html.Hidden("ValorFoiPagaOuRecebida", Model.FoiPagaOuRecebida)
+        @Html.Hidden("Tipo", Model.Tipo = FCMoney.Dominio.Enumeradores.EnumTipo.AHRECEBER)
+        <div class="form-group">
+            @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Descricao, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Descricao, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.DataDoPagamento, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DataDoPagamento, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DataDoPagamento, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.Valor, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Valor, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Valor, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="FoiPagaOuRecebida" name="FoiPagaOuRecebida" value="" />
+                        <label class="custom-control-label" for="FoiPagaOuRecebida">Conta Foi recebida</label>
+                    </div>
+                    <div>
+                        <asp:Button ID="Button1" runat="server" Text="Button" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>

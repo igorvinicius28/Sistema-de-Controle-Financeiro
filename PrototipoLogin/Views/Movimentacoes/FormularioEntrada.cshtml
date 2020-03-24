@@ -1,0 +1,33 @@
+﻿
+@model PrototipoLogin.Models.Movimentacoes.DtoEntrada
+
+@Html.AntiForgeryToken()
+
+<div id="message"></div>
+
+<form id="frmCliente">
+    <div class="form-horizontal">
+        @Html.Hidden("Id", Model.Id)
+        @Html.Hidden("Tipo", Model.Tipo = FCMoney.Dominio.Enumeradores.EnumTipo.ENTRADA)
+        <div class="form-group">
+            @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Descricao, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Descricao, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.DataCadastro, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DataCadastro, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DataCadastro, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.Valor, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Valor, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Valor, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+    </div>
+</form>

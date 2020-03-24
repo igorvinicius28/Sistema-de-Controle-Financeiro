@@ -1,0 +1,55 @@
+﻿@model  PrototipoLogin.Models.Usuario.DtoDadosPessoais
+@{
+    ViewBag.Title = "Dados Pessoais";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("DadosPessoais", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <p class="text-success">@ViewBag.StatusMessage</p>
+    <hr />
+
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.Nome, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(x => x.Nome, new { @class = "form-control" })
+            @Html.ValidationMessageFor(x => x.Nome, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(x => x.CEP, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(x => x.CEP, new { @class = "form-control" })
+            @Html.ValidationMessageFor(x => x.CEP, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(x => x.CPF, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.CPF, new { @class = "form-control" })
+            @Html.ValidationMessageFor(x => x.CPF, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.Telefone, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Telefone, new { @class = "form-control" })
+            @Html.ValidationMessageFor(x => x.Telefone, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <p class="text-success">@ViewBag.StatusMessage</p>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Atualizar" class="btn btn-primary btn-user btn-block" />
+        </div>
+    </div>
+    <p class="text-success">@ViewBag.StatusMessage</p>
+
+}
