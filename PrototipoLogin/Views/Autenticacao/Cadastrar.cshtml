@@ -24,7 +24,7 @@
 
     <!-- Custom styles for this template-->
     <link href="~/Content/Home/sb-admin-2.min.css" rel="stylesheet">
-
+    <link rel="shortcut icon" type="image/x-icon" href="~/Content/Img/favicom.png" />
 </head>
 
 <body class="bg-gradient-primary">
@@ -40,7 +40,7 @@
                     <div class="col-lg-7">
                         <div class="p-5">
                             <div class="text-center">
-                                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                                <h1 class="h4 text-gray-900 mb-4">Criar uma conta</h1>
                             </div>
                             @Html.ValidationSummary("", new { @class = "text-danger" })
                             <form class="user">
@@ -74,7 +74,7 @@
                             </form>
                             <hr>
                             <div class="text-center">
-                                <a class="small" href="forgot-password.html">Esqueceu a Senha?</a>
+                                <a class="small" href="@Url.Action("esquecerSenha2", "Autenticacao")">Esqueceu a senha?</a>
                             </div>
                             <div class="text-center">
                                 <a class="small" href="@Url.Action("Login", "Autenticacao")">Tudo pronto! ja tenho uma conta</a>

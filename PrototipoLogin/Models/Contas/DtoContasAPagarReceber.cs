@@ -12,9 +12,9 @@ namespace PrototipoLogin.Models.Contas
 
         public double? Valor { get; set; }
 
-        public DateTime DataCadastro { get; set; }
+        public string DataCadastro { get; set; }
 
-        public DateTime DataDoPagamento{ get; set; }
+        public string DataDoPagamento{ get; set; }
 
         public EnumTipo Tipo { get; set; }
 

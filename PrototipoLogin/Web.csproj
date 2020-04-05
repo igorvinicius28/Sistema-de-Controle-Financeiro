@@ -387,12 +387,15 @@
     <Content Include="Content\Home\fcmoney.index.css" />
     <Content Include="Content\Home\sb-admin-2.css" />
     <Content Include="Content\Home\sb-admin-2.min.css" />
+    <Content Include="Content\Img\favicom.png" />
     <Content Include="Content\Img\loginDolar.png" />
     <Content Include="Content\Img\slider-bg-1.jpg" />
     <Content Include="Content\Img\usuario.png" />
     <Content Include="Content\Main\bootstrap.min.css" />
     <Content Include="Content\Main\style.css" />
     <Content Include="Content\Main\StyleSheet.css" />
+    <Content Include="Scripts\Conta\TabelaConta.js" />
+    <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery.maskedinput.min.js" />
     <Content Include="Scripts\jquery.maskMoney.js" />
     <Content Include="Scripts\movimentacao\Custom.js" />
@@ -2194,11 +2197,9 @@
     <Content Include="Views\Autenticacao\DisplayEmailNaoConfirmado.cshtml" />
     <Content Include="Views\Autenticacao\esquecerSenha2.cshtml" />
     <Content Include="Views\Autenticacao\recuperarSenha.cshtml" />
-    <Content Include="Views\Movimentacoes\CadastrarEntrada.cshtml" />
+    <Content Include="Views\Movimentacoes\IndexEntrada.cshtml" />
     <Content Include="Views\Movimentacoes\Saida.cshtml" />
-    <Content Include="Views\Movimentacoes\CadastrarSaida.cshtml" />
-    <Content Include="Views\Contas\ContasAPagar.cshtml" />
-    <Content Include="Views\Contas\ContasAReceber.cshtml" />
+    <Content Include="Views\Movimentacoes\IndexSaida.cshtml" />
     <Content Include="Views\Relatorios\Index.cshtml" />
     <Content Include="Views\Metas\Index.cshtml" />
     <Content Include="Views\Manage\DadosPessoais.cshtml" />
@@ -2209,6 +2210,8 @@
     <Content Include="Views\Contas\FormularioAhPagar.cshtml" />
     <Content Include="Views\Contas\ConfirmacaoExcluirContaModal.cshtml" />
     <Content Include="Views\Contas\FormularioAhReceber.cshtml" />
+    <Content Include="Views\Contas\IndexContaEntrada.cshtml" />
+    <Content Include="Views\Contas\IndexContaSaida.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2228,13 +2231,13 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FCMoney.Dominio\FCMoney.Dominio.csproj">
+    <ProjectReference Include="..\FCMoney.Dominio\RMContabilidade.Dominio.csproj">
       <Project>{CA6590B5-3C52-4E3B-BA18-385535311EAE}</Project>
-      <Name>FCMoney.Dominio</Name>
+      <Name>RMContabilidade.Dominio</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FCMoney.Repositorio\FCMoney.Repositorio.csproj">
+    <ProjectReference Include="..\FCMoney.Repositorio\RMContabilidade.Repositorio.csproj">
       <Project>{0F3EA856-2989-4D64-A6CC-43553BFED69F}</Project>
-      <Name>FCMoney.Repositorio</Name>
+      <Name>RMContabilidade.Repositorio</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

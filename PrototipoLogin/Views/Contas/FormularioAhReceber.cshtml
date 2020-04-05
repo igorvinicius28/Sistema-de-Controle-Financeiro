@@ -10,6 +10,7 @@
         @Html.Hidden("Id", Model.Id)
         @Html.Hidden("ValorFoiPagaOuRecebida", Model.FoiPagaOuRecebida)
         @Html.Hidden("Tipo", Model.Tipo = FCMoney.Dominio.Enumeradores.EnumTipo.AHRECEBER)
+        @Html.Hidden("DataCadastro", Model.DataCadastro);
         <div class="form-group">
             @Html.LabelFor(model => model.Descricao, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">

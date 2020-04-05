@@ -39,6 +39,9 @@ namespace FCMoney.Dominio.Contratos
         /// <param name="obj"></param>
         void Excluir(TEntity obj);
 
+        /// <summary>
+        /// 
+        /// </summary>
         void Dispose();
     }
 }

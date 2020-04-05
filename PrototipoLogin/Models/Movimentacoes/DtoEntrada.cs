@@ -11,7 +11,7 @@ namespace PrototipoLogin.Models.Movimentacoes
 
         public double? Valor { get; set; }
 
-        public DateTime DataCadastro { get; set; }
+        public string DataCadastro { get; set; }
 
         public EnumTipo Tipo { get; set; }
     }

@@ -43,168 +43,38 @@ namespace PrototipoLogin.Controllers
             }
         }
 
-        /***************************** CONTAS A PAGAR ***************************************/
+        /***************************** CONTAS A RECEBER ***************************************/
 
-        // GET: Contas
-        public ActionResult ContasAPagar()
+        // GET: Movimentacoes
+        public ActionResult IndexContaEntrada()
         {
-            ServicoDeContasImpl servico = new ServicoDeContasImpl(new RepositorioContas());
-            var lista = servico.ConsulteLista().Where(x => x.Tipo == EnumTipo.AHPAGAR).ToList();
-            var listaDtoEntrada = new List<DtoContasAPagarReceber>();
+            return View();
+        }
+
+        public ActionResult ObtenhaListaContasAhReceber()
+        {
+            var servico = new ServicoDeContasImpl(new RepositorioContas());
+            var lista = new List<Contas>();
+
+            lista = servico.ConsulteLista().Where(x => x.Tipo == EnumTipo.AHRECEBER).ToList();
+
+            var listaDtoContasAPagarReceber = new List<DtoContasAPagarReceber>();
             lista.ForEach(x =>
             {
-                var dtoEntrada = new DtoContasAPagarReceber()
+                var dtoConta = new DtoContasAPagarReceber()
                 {
                     Id = x.Id,
-                    DataDoPagamento = x.DataDoPagamento,
+                    DataCadastro = x.DataCadastro.ToString(),
+                    DataDoPagamento = x.DataDoPagamento.ToShortDateString(),
                     Descricao = x.Descricao,
-                    Tipo = EnumTipo.ENTRADA,
+                    Tipo = x.Tipo,
                     FoiPagaOuRecebida = x.FoiPagaOuRecebida,
                     Valor = x.Valor
                 };
-                listaDtoEntrada.Add(dtoEntrada);
+                listaDtoContasAPagarReceber.Add(dtoConta);
             });
 
-            return View(listaDtoEntrada);
-        }
-
-        public ActionResult CreateAhPagar()
-        {
-            var DtoEntrada = new DtoContasAPagarReceber();
-            return PartialView("~/Views/Contas/FormularioAhPagar.cshtml", DtoEntrada);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult CreateAhPagar(DtoContasAPagarReceber dtoContasAPagarReceber)
-        {
-            var servico = new ServicoDeContasImpl(new RepositorioContas());
-
-            try
-            {
-                //conversor
-                var movimentacao = new Contas
-                {
-                    Descricao = dtoContasAPagarReceber.Descricao,
-                    DataCadastro = dtoContasAPagarReceber.DataCadastro,
-                    Valor = dtoContasAPagarReceber.Valor,
-                    Tipo = dtoContasAPagarReceber.Tipo,
-                    FoiPagaOuRecebida = dtoContasAPagarReceber.FoiPagaOuRecebida
-                };
-
-                servico.Cadastrar(movimentacao);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex.Message);
-            }
-
-            return Json(new { Resultado = "Sucesso" }, JsonRequestBehavior.AllowGet);
-        }
-
-        public ActionResult Edit(int id)
-        {
-            var servico = new ServicoDeContasImpl(new RepositorioContas());
-
-            var movimentacaoAhPagarReceber = servico.ConsultePorId(id);
-
-            var dtoContasAPagarReceber = new DtoContasAPagarReceber
-            {
-                Id = movimentacaoAhPagarReceber.Id,
-                Descricao = movimentacaoAhPagarReceber.Descricao,
-                DataCadastro = movimentacaoAhPagarReceber.DataCadastro,
-                FoiPagaOuRecebida = movimentacaoAhPagarReceber.FoiPagaOuRecebida,
-                Valor = movimentacaoAhPagarReceber.Valor,
-                Tipo = movimentacaoAhPagarReceber.Tipo
-            };
-
-            if(movimentacaoAhPagarReceber.Tipo == EnumTipo.AHPAGAR)
-            {
-                return PartialView("~/Views/Contas/FormularioAhPagar.cshtml", dtoContasAPagarReceber);
-            }
-            return PartialView("~/Views/Contas/FormularioAhReceber.cshtml", dtoContasAPagarReceber);
-        }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(DtoContasAPagarReceber dtoContasAPagarReceber)
-        {
-            var servico = new ServicoDeContasImpl(new RepositorioContas());
-            try
-            {
-                var movimentacaoAhPagarReceber = new Contas
-                {
-                    Id = dtoContasAPagarReceber.Id,
-                    Descricao = dtoContasAPagarReceber.Descricao,
-                    DataDoPagamento = dtoContasAPagarReceber.DataDoPagamento,
-                    FoiPagaOuRecebida = dtoContasAPagarReceber.FoiPagaOuRecebida,
-                    Tipo = dtoContasAPagarReceber.Tipo,
-                    Valor = dtoContasAPagarReceber.Valor
-                };
-
-                servico.Atualizar(movimentacaoAhPagarReceber);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.Message);
-            }
-
-            return Json(new { Resultado = "Sucesso" }, JsonRequestBehavior.AllowGet);
-        }
-
-        public ActionResult excluirs(int id)
-        {
-            var servico = new ServicoDeContasImpl(new RepositorioContas());
-
-            var movimentacaoAhPagarReceber = servico.ConsultePorId(id);
-
-            var dtoEntrada = new DtoContasAPagarReceber
-            {
-                Id = movimentacaoAhPagarReceber.Id,
-                Descricao = movimentacaoAhPagarReceber.Descricao,
-                DataCadastro = movimentacaoAhPagarReceber.DataCadastro,
-                Valor = movimentacaoAhPagarReceber.Valor,
-                Tipo = movimentacaoAhPagarReceber.Tipo
-            };
-
-            return PartialView("~/Views/Contas/ConfirmacaoExcluirContaModal.cshtml", dtoEntrada);
-        }
-
-        public ActionResult excluir(int id)
-        {
-            var servico = new ServicoDeContasImpl(new RepositorioContas());
-
-            var movimentacaoAhPagarReceber = servico.ConsultePorId(id);
-
-            servico.Excluir(movimentacaoAhPagarReceber);
-
-            return Json(new { Resultado = "Sucesso" }, JsonRequestBehavior.AllowGet);
-        }
-
-        /***************************** CONTAS A Receber  **********************************/
-
-        // GET: Contas
-        public ActionResult ContasAReceber()
-        {
-            ServicoDeContasImpl servico = new ServicoDeContasImpl(new RepositorioContas());
-            var lista = servico.ConsulteLista().Where(x => x.Tipo == EnumTipo.AHRECEBER).ToList();
-            var listaDtoAhReceber = new List<DtoContasAPagarReceber>();
-            lista.ForEach(x =>
-            {
-                var dtoAhReceber = new DtoContasAPagarReceber()
-                {
-                    Id = x.Id,
-                    DataDoPagamento = x.DataDoPagamento,
-                    Descricao = x.Descricao,
-                    Tipo = EnumTipo.ENTRADA,
-                    FoiPagaOuRecebida = x.FoiPagaOuRecebida,
-                    Valor = x.Valor
-                };
-                listaDtoAhReceber.Add(dtoAhReceber);
-            });
-
-            return View(listaDtoAhReceber);
+            return Json(new { data = listaDtoContasAPagarReceber }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult CreateAhReceber()
@@ -225,7 +95,86 @@ namespace PrototipoLogin.Controllers
                 var movimentacao = new Contas
                 {
                     Descricao = dtoContasAPagarReceber.Descricao,
-                    DataCadastro = dtoContasAPagarReceber.DataCadastro,
+                    DataCadastro = DateTime.Now,
+                    DataDoPagamento = DateTime.Parse(dtoContasAPagarReceber.DataDoPagamento),
+                    Valor = dtoContasAPagarReceber.Valor,
+                    Tipo = dtoContasAPagarReceber.Tipo,
+                    FoiPagaOuRecebida = dtoContasAPagarReceber.FoiPagaOuRecebida,
+                };
+
+                servico.Cadastrar(movimentacao);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+            }
+
+            return Json(new { Resultado = "Sucesso" }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult ConfirmacaoExcluirModal(int id)
+        {
+            var dtoContasAPagarReceber = new DtoContasAPagarReceber
+            {
+                Descricao = id.ToString(),
+            };
+            return PartialView("~/Views/Contas/ConfirmacaoExcluirContaModal.cshtml", dtoContasAPagarReceber);
+        }
+
+        /***************************** CONTAS A PAGAR ***************************************/
+
+        // GET: Movimentacoes
+        public ActionResult IndexContaSaida()
+        {
+            return View();
+        }
+
+        public ActionResult ObtenhaListaContasAhPagar()
+        {
+            var servico = new ServicoDeContasImpl(new RepositorioContas());
+            var lista = new List<Contas>();
+
+            lista = servico.ConsulteLista().Where(x => x.Tipo == EnumTipo.AHPAGAR).ToList();
+
+            var listaDtoContasAPagarReceber = new List<DtoContasAPagarReceber>();
+            lista.ForEach(x =>
+            {
+                var dtoConta = new DtoContasAPagarReceber()
+                {
+                    Id = x.Id,
+                    DataCadastro = x.DataCadastro.ToShortDateString(),
+                    DataDoPagamento = x.DataDoPagamento.ToShortDateString(),
+                    Descricao = x.Descricao,
+                    Tipo = x.Tipo,
+                    FoiPagaOuRecebida = x.FoiPagaOuRecebida,
+                    Valor = x.Valor
+                };
+                listaDtoContasAPagarReceber.Add(dtoConta);
+            });
+
+            return Json(new { data = listaDtoContasAPagarReceber }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult CreateAhPagar()
+        {
+            var DtoEntrada = new DtoContasAPagarReceber();
+            return PartialView("~/Views/Contas/FormularioAhPagar.cshtml", DtoEntrada);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateAhPagar(DtoContasAPagarReceber dtoContasAPagarReceber)
+        {
+            var servico = new ServicoDeContasImpl(new RepositorioContas());
+
+            try
+            {
+                //conversor
+                var movimentacao = new Contas
+                {
+                    Descricao = dtoContasAPagarReceber.Descricao,
+                    DataCadastro = DateTime.Now,
+                    DataDoPagamento = DateTime.Parse(dtoContasAPagarReceber.DataDoPagamento),
                     Valor = dtoContasAPagarReceber.Valor,
                     Tipo = dtoContasAPagarReceber.Tipo,
                     FoiPagaOuRecebida = dtoContasAPagarReceber.FoiPagaOuRecebida
@@ -239,6 +188,71 @@ namespace PrototipoLogin.Controllers
             }
 
             return Json(new { Resultado = "Sucesso" }, JsonRequestBehavior.AllowGet);
+        }
+
+        /**************************** METODOS GENERICOS ************************************/
+
+        public ActionResult Edit(int id)
+        {
+            var servico = new ServicoDeContasImpl(new RepositorioContas());
+
+            var movimentacaoAhPagarReceber = servico.ConsultePorId(id);
+
+            var dtoContasAPagarReceber = new DtoContasAPagarReceber
+            {
+                Id = movimentacaoAhPagarReceber.Id,
+                Descricao = movimentacaoAhPagarReceber.Descricao,
+                DataCadastro = movimentacaoAhPagarReceber.DataCadastro.ToShortDateString(),
+                DataDoPagamento = movimentacaoAhPagarReceber.DataDoPagamento.ToShortDateString(),
+                FoiPagaOuRecebida = movimentacaoAhPagarReceber.FoiPagaOuRecebida,
+                Valor = movimentacaoAhPagarReceber.Valor,
+                Tipo = movimentacaoAhPagarReceber.Tipo
+            };
+
+            if (movimentacaoAhPagarReceber.Tipo == EnumTipo.AHPAGAR)
+            {
+                return PartialView("~/Views/Contas/FormularioAhPagar.cshtml", dtoContasAPagarReceber);
+            }
+            return PartialView("~/Views/Contas/FormularioAhReceber.cshtml", dtoContasAPagarReceber);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(DtoContasAPagarReceber dtoContasAPagarReceber)
+        {
+            var servico = new ServicoDeContasImpl(new RepositorioContas());
+            try
+            {
+                var movimentacaoAhPagarReceber = new Contas
+                {
+                    Id = dtoContasAPagarReceber.Id,
+                    Descricao = dtoContasAPagarReceber.Descricao,
+                    DataCadastro = DateTime.Parse(dtoContasAPagarReceber.DataCadastro),
+                    DataDoPagamento = DateTime.Parse(dtoContasAPagarReceber.DataDoPagamento),
+                    FoiPagaOuRecebida = dtoContasAPagarReceber.FoiPagaOuRecebida,
+                    Tipo = dtoContasAPagarReceber.Tipo,
+                    Valor = dtoContasAPagarReceber.Valor
+                };
+
+                servico.Atualizar(movimentacaoAhPagarReceber);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+            }
+
+            return Json(new { Resultado = "Sucesso" }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult Delete(int id)
+        {
+            var servico = new ServicoDeContasImpl(new RepositorioContas());
+
+            var contas = servico.ConsultePorId(id);
+
+            servico.Excluir(contas);
+            return Json(new { success = true, message = "Deleted Successfully" }, JsonRequestBehavior.AllowGet);
         }
     }
 }

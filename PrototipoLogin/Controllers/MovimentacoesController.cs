@@ -1,16 +1,11 @@
 ﻿using FCMoney.Dominio.Entidades.Movimentacoes;
 using FCMoney.Dominio.Enumeradores;
-using FCMoney.Dominio.Interfaces.Servicos;
 using FCMoney.Repositorio.Repositorios.RepositorioMovimentacoes;
-using FCMoney.Repositorio.Repositorios.Util;
 using FCMoney.Repositorio.Servicos.Servicos;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.AspNetCore.Identity;
-using NLog.Fluent;
 using PrototipoLogin.Identity;
 using PrototipoLogin.Models.Movimentacoes;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,57 +43,36 @@ namespace PrototipoLogin.Controllers
             }
         }
 
-
-
-        /************************* MOVIMENTACOES DE ENTRADA ****************************/
+        /************************* IMIGRACAO ****************************/
 
         // GET: Movimentacoes
-        public ActionResult CadastrarEntrada()
+        public ActionResult IndexEntrada()
+        {
+            return View();
+        }
+
+        public ActionResult ObtenhaListaEntrada(string id)
         {
             ServicoDeMovimentacaoImpl servico = new ServicoDeMovimentacaoImpl(new RepositorioMovimentacoes());
-            var lista = servico.ConsulteLista().Where(x => x.Tipo == EnumTipo.ENTRADA).ToList();
+            var lista = new List<Movimentacao>();
+
+            lista = servico.ConsulteLista().Where(x => x.Tipo == EnumTipo.ENTRADA).ToList();
+
             var listaDtoEntrada = new List<DtoEntrada>();
             lista.ForEach(x =>
             {
                 var dtoEntrada = new DtoEntrada()
                 {
                     Id = x.Id,
-                    DataCadastro = x.DataCadastro,
+                    DataCadastro = x.DataCadastro.ToShortDateString(),
                     Descricao = x.Descricao,
-                    Tipo = EnumTipo.ENTRADA,
+                    Tipo = x.Tipo,
                     Valor = x.Valor
                 };
                 listaDtoEntrada.Add(dtoEntrada);
             });
 
-
-            return View(listaDtoEntrada);
-        }
-
-        // POST: /Account/Manage
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CadastrarEntrada(DtoEntrada model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-
-            //CONVERSOR
-              Movimentacao movimentacao = new Movimentacao();
-              movimentacao.Descricao = model.Descricao;
-              movimentacao.Valor = model.Valor;
-              movimentacao.DataCadastro = model.DataCadastro;
-              movimentacao.Tipo = EnumTipo.ENTRADA;
-             // movimentacao.FoiPaga = true;
-              movimentacao.UsuarioId = user.Id;
-
-            ServicoDeMovimentacaoImpl servico = new ServicoDeMovimentacaoImpl(new RepositorioMovimentacoes());
-            servico.Cadastrar(movimentacao);
-
-            return View(model);
+            return Json(new { data = listaDtoEntrada }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Create()
@@ -109,7 +83,7 @@ namespace PrototipoLogin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateEntrada(DtoEntrada dtoEntrada)
+        public async Task<ActionResult> CreateEntrada(DtoEntrada dtoEntrada)
         {
             ServicoDeMovimentacaoImpl servico = new ServicoDeMovimentacaoImpl(new RepositorioMovimentacoes());
 
@@ -119,7 +93,7 @@ namespace PrototipoLogin.Controllers
                 var movimentacao = new Movimentacao
                 {
                     Descricao = dtoEntrada.Descricao,
-                    DataCadastro = dtoEntrada.DataCadastro,
+                    DataCadastro = DateTime.Parse(dtoEntrada.DataCadastro),
                     Valor = dtoEntrada.Valor,
                     Tipo = EnumTipo.ENTRADA
 
@@ -135,20 +109,32 @@ namespace PrototipoLogin.Controllers
             return Json(new { Resultado = "Sucesso" }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Edit(int id, EnumTipo tipo)
+        [HttpPost]
+        public ActionResult Delete(int id)
         {
             ServicoDeMovimentacaoImpl servico = new ServicoDeMovimentacaoImpl(new RepositorioMovimentacoes());
 
             var movimentacao = servico.ConsultePorId(id);
 
-            if (tipo == EnumTipo.ENTRADA) {
+            servico.Excluir(movimentacao);
+            return Json(new { success = true, message = "Deleted Successfully" }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Edit(int id)
+        {
+            ServicoDeMovimentacaoImpl servico = new ServicoDeMovimentacaoImpl(new RepositorioMovimentacoes());
+
+            var movimentacao = servico.ConsultePorId(id);
+
+            if(movimentacao.Tipo == EnumTipo.ENTRADA) { 
 
                 var dtoEntrada = new DtoEntrada
                 {
                     Id = movimentacao.Id,
                     Descricao = movimentacao.Descricao,
-                    DataCadastro = movimentacao.DataCadastro,
-                    Valor = movimentacao.Valor
+                    DataCadastro = movimentacao.DataCadastro.ToShortDateString(),
+                    Valor = movimentacao.Valor,
+                    Tipo = movimentacao.Tipo
                 };
 
                 return PartialView("~/Views/Movimentacoes/FormularioEntrada.cshtml", dtoEntrada);
@@ -159,13 +145,13 @@ namespace PrototipoLogin.Controllers
                 {
                     Id = movimentacao.Id,
                     Descricao = movimentacao.Descricao,
-                    DataCadastro = movimentacao.DataCadastro,
-                    Valor = movimentacao.Valor
+                    DataCadastro = movimentacao.DataCadastro.ToShortDateString(),
+                    Valor = movimentacao.Valor,
+                    Tipo = movimentacao.Tipo
                 };
 
                 return PartialView("~/Views/Movimentacoes/FormularioSaida.cshtml", dtoSaida);
             }
-
 
         }
 
@@ -180,7 +166,7 @@ namespace PrototipoLogin.Controllers
                 {
                     Id = dtoEntrada.Id,
                     Descricao = dtoEntrada.Descricao,
-                    DataCadastro = dtoEntrada.DataCadastro,
+                    DataCadastro = DateTime.Parse(dtoEntrada.DataCadastro),
                     Valor = dtoEntrada.Valor,
                     Tipo = dtoEntrada.Tipo
                 };
@@ -195,22 +181,19 @@ namespace PrototipoLogin.Controllers
             return Json(new { Resultado = "Sucesso" }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult excluirs(int id)
+        public ActionResult ConfirmacaoExcluirModal(int id)
         {
-            ServicoDeMovimentacaoImpl servico = new ServicoDeMovimentacaoImpl(new RepositorioMovimentacoes());
-
-            var movimentacaoEntrada = servico.ConsultePorId(id);
-
             var dtoEntrada = new DtoEntrada
             {
-                Id = movimentacaoEntrada.Id,
-                Descricao = movimentacaoEntrada.Descricao,
-                DataCadastro = movimentacaoEntrada.DataCadastro,
-                Valor = movimentacaoEntrada.Valor
+                Descricao = id.ToString(),
             };
-
             return PartialView("~/Views/Movimentacoes/ConfirmacaoExcluirModal.cshtml", dtoEntrada);
         }
+
+        /// <summary>
+
+        /************************* MOVIMENTACOES DE ENTRADA ****************************/
+
 
         public ActionResult excluir(int id)
         {
@@ -223,54 +206,28 @@ namespace PrototipoLogin.Controllers
             return Json(new { Resultado = "Sucesso" }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Listar(string nome)
+        /********************************************** MOVIMENTACOES DE SAIDA ***************************************/
+
+        // GET: Movimentacoes
+        public ActionResult IndexSaida()
+        {
+            return View();
+        }
+
+        public ActionResult ObtenhaListaSaida()
         {
             ServicoDeMovimentacaoImpl servico = new ServicoDeMovimentacaoImpl(new RepositorioMovimentacoes());
             var lista = new List<Movimentacao>();
 
-            try
-            {
-                if (string.IsNullOrEmpty(nome))
-                    lista = servico.ConsulteLista();
-                else
-                    lista = servico.ConsulteLista().Where(m => m.Descricao.Contains(nome)).ToList();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.Message);
-            }
+            lista = servico.ConsulteLista().Where(x => x.Tipo == EnumTipo.SAIDA).ToList();
 
-            var listaDtoEntrada = new List<DtoEntrada>();
-            lista.ForEach(x =>
-            {
-                var dtoEntrada = new DtoEntrada()
-                {
-                    Id = x.Id,
-                    DataCadastro = x.DataCadastro,
-                    Descricao = x.Descricao,
-                    Tipo = EnumTipo.ENTRADA,
-                    Valor = x.Valor
-                };
-                listaDtoEntrada.Add(dtoEntrada);
-            });
-
-            return PartialView("~/Views/Cliente/CadastrarEntrada.cshtml", listaDtoEntrada);
-        }
-
-        /********************************************** MOVIMENTACOES DE SAIDA ***************************************/
-
-        // GET: Movimentacoes
-        public ActionResult CadastrarSaida()
-        {
-            ServicoDeMovimentacaoImpl servico = new ServicoDeMovimentacaoImpl(new RepositorioMovimentacoes());
-            var lista = servico.ConsulteLista().Where(x => x.Tipo == EnumTipo.SAIDA).ToList();
-            var listaDtoSaida= new List<DtoSaida>();
+            var listaDtoSaida = new List<DtoSaida>();
             lista.ForEach(x =>
             {
                 var dtoSaida = new DtoSaida()
                 {
                     Id = x.Id,
-                    DataCadastro = x.DataCadastro,
+                    DataCadastro = x.DataCadastro.ToShortDateString(),
                     Descricao = x.Descricao,
                     Tipo = x.Tipo,
                     Valor = x.Valor
@@ -278,33 +235,7 @@ namespace PrototipoLogin.Controllers
                 listaDtoSaida.Add(dtoSaida);
             });
 
-            return View(listaDtoSaida);
-        }
-
-        //
-        // POST: /Account/Manage
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CadastrarSaida(DtoEntrada model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-
-            //CONVERSOR
-            Movimentacao movimentacao = new Movimentacao();
-            movimentacao.Descricao = model.Descricao;
-            movimentacao.Valor = model.Valor;
-            movimentacao.DataCadastro = model.DataCadastro;
-            movimentacao.Tipo = model.Tipo;
-            movimentacao.UsuarioId = user.Id;
-
-            ServicoDeMovimentacaoImpl servico = new ServicoDeMovimentacaoImpl(new RepositorioMovimentacoes());
-            servico.Cadastrar(movimentacao);
-
-            return View(model);
+            return Json(new { data = listaDtoSaida }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult CreateSaida()
@@ -325,7 +256,7 @@ namespace PrototipoLogin.Controllers
                 var movimentacao = new Movimentacao
                 {
                     Descricao = dtoSaida.Descricao,
-                    DataCadastro = dtoSaida.DataCadastro,
+                    DataCadastro = DateTime.Parse(dtoSaida.DataCadastro),
                     Valor = dtoSaida.Valor,
                     Tipo = dtoSaida.Tipo
                 };
@@ -350,7 +281,7 @@ namespace PrototipoLogin.Controllers
             {
                 Id = movimentacaoSaida.Id,
                 Descricao = movimentacaoSaida.Descricao,
-                DataCadastro = movimentacaoSaida.DataCadastro,
+                DataCadastro = movimentacaoSaida.DataCadastro.ToShortDateString(),
                 Valor = movimentacaoSaida.Valor
             };
 
@@ -368,7 +299,7 @@ namespace PrototipoLogin.Controllers
                 {
                     Id = dtoSaida.Id,
                     Descricao = dtoSaida.Descricao,
-                    DataCadastro = dtoSaida.DataCadastro,
+                    DataCadastro = DateTime.Parse(dtoSaida.DataCadastro),
                     Valor = dtoSaida.Valor,
                     Tipo = dtoSaida.Tipo
                 };

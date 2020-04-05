@@ -18,10 +18,14 @@
     <!-- Custom styles for this template-->
     <link href="~/Content/Home/fcmoney.index.min.css" rel="stylesheet">
     <link href="~/Content/DataTable/EstiloPaginacao.css" rel="stylesheet">
+
+    <!-- favicom-->
+    <link rel="shortcut icon" type="image/x-icon" href="~/Content/Img/favicom.png" />
+
 </head>
 
 <body id="page-top">
-
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -31,7 +35,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="@Url.Action("Index", "Home")">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                    <i class=""><img src="~/Content/Img/favicom.png" style="width: 40px;"/> </i>
                 </div>
                 <div class="sidebar-brand-text mx-1">RMContabilidade</div>
             </a>
@@ -59,8 +63,8 @@
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="@Url.Action("CadastrarEntrada", "Movimentacoes")">Entrada</a>
-                        <a class="collapse-item" href="@Url.Action("CadastrarSaida", "Movimentacoes")">Saida</a>
+                        <a class="collapse-item" href="@Url.Action("IndexEntrada", "Movimentacoes")">Entrada</a>
+                        <a class="collapse-item" href="@Url.Action("IndexSaida", "Movimentacoes")">Saida</a>
                     </div>
                 </div>
             </li>
@@ -74,8 +78,8 @@
                 </a>
                 <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="@Url.Action("ContasAPagar", "Contas")">Contas a Pagar</a>
-                        <a class="collapse-item" href="@Url.Action("ContasAReceber", "Contas")">Contas a Receber</a>
+                        <a class="collapse-item" href="@Url.Action("IndexContaEntrada", "Contas")">Contas a Receber</a>
+                        <a class="collapse-item" href="@Url.Action("IndexContaSaida", "Contas")">Contas a Pagar</a>
                     </div>
                 </div>
             </li>
@@ -168,11 +172,19 @@
 
         <!-- Script para cadastro de movimentacoes-->
         <script src="~/Scripts/movimentacao/lista2.js"></script>
+        <script src="~/Scripts/Conta/TabelaConta.js"></script>
+
         <!--<script src="~/Scripts/movimentacao/lista.js"></script>-->
         <!-- Script custom movimentacoes-->
         <script src="~/Scripts/movimentacao/Custom.js"></script>
 
+        <!--  SCRIPTS COM ERRO 404
         <script src="/Scripts/plugins/jQuery/jquery-3.1.1.min.js"></script>
+        <script src="/Scripts/adminlte.min.js"></script>
+        <script src="~/Scripts/plugins/datepicker/bootstrap-datepicker.js"></script>
+        <script src="/Scripts/custom.js"></script>
+    -->
+
 
         <script src="~/Scripts/jquery.validate.js"></script>
         <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
@@ -182,10 +194,8 @@
 
         <!-- SCRIPT DE TESTES-->
         <!-- AdminLTE App -->
-        <script src="/Scripts/adminlte.min.js"></script>
 
-        <script src="~/Scripts/plugins/datepicker/bootstrap-datepicker.js"></script>
-        <script src="/Scripts/custom.js"></script>
+
 
         <script src="~/Scripts/jquery.maskedinput.min.js"></script>
         <script src="~/Scripts/jquery.maskMoney.js"></script>
@@ -197,18 +207,77 @@
 
 
         <script>
+            var tipo = $("#tipo").val();
+            var url = "/Movimentacoes/ObtenhaListaEntrada";
+
+            if (tipo == "Saida") {
+                url = "/Movimentacoes/ObtenhaListaSaida";
+            }
+
+            var Popup, dataTable;
             $(document).ready(function () {
-                $('#minhaTabela').DataTable({
-                    "language": {
-                        "lengthMenu": "Mostrando _MENU_ registros por página",
-                        "zeroRecords": "Nada encontrado",
-                        "info": "Mostrando página _PAGE_ de _PAGES_",
-                        "infoEmpty": "Nenhum registro disponível",
-                        "infoFiltered": "(filtrado de _MAX_ registros no total)"
-                    }
+                dataTable = $("#minhaTabela").DataTable({
+                    "scrollY": "200px",
+                    "scrollCollapse": true,
+                    "paging": false,
+
+                    "ajax": {
+                        "url": url,
+                        "type": "GET",
+                        "datatype": "json"
+                    },
+                    "columns": [
+                        { "data": "Descricao" },
+                        { "data": "DataCadastro" },
+                        { "data": "Valor" },
+                        {
+                            "data": "Id", "render": function (data) {
+                                return "<a class='btn btn-default btn-sm' onclick=movimentacoes.editar(" + data + ")><i class='fa fa-pencil'></i> Edit</a><a class='btn btn-danger btn-sm' style='margin-left:5px' onclick=movimentacoes.DeleteModal(" + data + ")><i class='fa fa-trash'></i> Delete</a>";
+                            },
+                            "orderable": false,
+                            "searchable": false,
+                        }
+                    ],
                 });
             });
+
+            var tipo = $("#tipo").val();
+            var urlConta = "/Contas/ObtenhaListaContasAhReceber";
+            if (tipo == "AHPAGAR") {
+                urlConta = "/Contas/ObtenhaListaContasAhPagar";
+            }
+
+            var Popup, dataTableConta;
+            $(document).ready(function () {
+                dataTableConta = $("#TabelaContas").DataTable({
+                    "scrollY": "200px",
+                    "scrollCollapse": true,
+                    "paging": false,
+
+                    "ajax": {
+                        "url": urlConta,
+                        "type": "GET",
+                        "datatype": "json"
+                    },
+                    "columns": [
+                        { "data": "Descricao" },
+                        { "data": "DataDoPagamento" },
+                        { "data": "Valor" },
+                        {
+                            "data": "Id", "render": function (data) {
+                                return "<a class='btn btn-default btn-sm' onclick=conta.editarConta(" + data + ")><i class='fa fa-pencil'></i> Edit</a><a class='btn btn-danger btn-sm' style='margin-left:5px' onclick=conta.DeleteModal(" + data + ")><i class='fa fa-trash'></i> Delete</a>";
+                            },
+                            "orderable": false,
+                            "searchable": false,
+                        }
+                    ],
+                });
+            });
+
         </script>
+
+        @RenderSection("scripts", required: false)
+
 
 
 </body>

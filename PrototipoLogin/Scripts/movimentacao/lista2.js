@@ -29,14 +29,14 @@ var helper = {
     }
 
     , openModalExcluir: function (titulo, data, componente) {
+
         $("#modal-title2").html("<h2>" + titulo + "</h2>");
 
         $("#modal-body2").html(data);
 
-        $("#btnSalvar").click(function () {
+        $("#Delete").click(function () {
             movimentacoes.salvar();
         });
-
         $("#myModal2").modal("show");
 
         AplicarMascara();
@@ -130,18 +130,16 @@ var movimentacoes = {
             }
         }).done(function (data) {
             if (data.Resultado == "Sucesso") {
-                movimentacoes.listar();
+                dataTable.ajax.reload();
                 helper.message("Registro gravado com sucesso");
                 helper.fecharModal();
             }
         });
         //   }
-
     },
 
     salvarConta: function () {
         //  if (cliente.validar()) {
-
         //Nome
         var id = $("#Id").val();
         var tipo = $("#Tipo").val();
@@ -181,7 +179,7 @@ var movimentacoes = {
             }
         }).done(function (data) {
             if (data.Resultado == "Sucesso") {
-                movimentacoes.listar();
+                dataTable.ajax.reload();
                 helper.message("Registro gravado com sucesso");
                 helper.fecharModal();
             }
@@ -221,7 +219,6 @@ var movimentacoes = {
             , type: "GET"
             , data: { descricao: descricao, data: dataCadastro, valor: valor }
         }).done(function (data) {
-
             div.html("");
             div.html(data);
 
@@ -270,7 +267,7 @@ var movimentacoes = {
             url: url
             , datatype: "html"
             , type: "GET"
-            , data: { id: id, Tipo: tipo }
+            , data: { id: id}
             , beforeSend: function () {
                 //  waitingDialog.show('Aguarde');
             }
@@ -310,7 +307,6 @@ var movimentacoes = {
 
     excluirs: function (id) {
         var url = "/Movimentacoes/Excluirs";
-
         $.ajax({
             url: url
             , datatype: "html"
@@ -323,7 +319,7 @@ var movimentacoes = {
                 //    waitingDialog.hide();
             }
         }).done(function (data) {
-            helper.openModalExcluir("Excluir Movimentação", data, movimentacoes);
+            helper.openModalExcluir("Excluir Movimentação", data, movimentacoes, id);
         });
 
     },
@@ -339,7 +335,7 @@ var movimentacoes = {
             , data: { id: id }
         }).done(function (data) {
             if (data.Resultado) {
-                movimentacoes.listar();
+              //  movimentacoes.listar();
                 helper.fecharModalExclusao();
             } else {
                 alert("Erro ao excluir registro, verifique os dados e tente novamente");
@@ -380,14 +376,12 @@ var movimentacoes = {
             , data: { id: id }
         }).done(function (data) {
             if (data.Resultado) {
-                movimentacoes.listar();
+           //     movimentacoes.listar();
                 helper.fecharModalExclusao();
             } else {
                 alert("Erro ao excluir registro, verifique os dados e tente novamente");
             }
         });
-
-
     },
 
     limpar: function () {
@@ -396,6 +390,7 @@ var movimentacoes = {
     },
 
     obtenhaUrl: function (tipo) {
+
         if (tipo === "ENTRADA") {
             return "/Movimentacoes/CreateEntrada";
         } 
@@ -409,14 +404,96 @@ var movimentacoes = {
             return "/Contas/CreateAhReceber";
         }
     },
-}
+
+    // IMIGRACAO
+
+    DeleteModal: function (id) {
+        var url = "/Movimentacoes/ConfirmacaoExcluirModal";
+        $.ajax({
+            url: url
+            , datatype: "json"
+            , type: "POST"
+            , data: { id: id }
+            , beforeSend: function () {
+                //  waitingDialog.show('Aguarde');
+            }
+            , complete: function () {
+                //    waitingDialog.hide();
+            }
+        }).done(function (data) {
+            helper.openModalExcluir("Excluir Movimentação", data, movimentacoes);
+        });
+
+
+    },
+
+    Delete() {
+        var ide = $("#identificador").val();
+        var url = "/Movimentacoes/Delete";
+        $.ajax({
+            url: url,
+            datatype: "html",
+            type: "POST",
+            data: { id: ide }
+        }).done(function (data) {
+            if (data.success) {
+                dataTable.ajax.reload();
+                helper.fecharModalExclusao();
+            } else {
+                alert("Erro ao excluir registro, verifique os dados e tente novamente");
+            }
+        });
+    },
+
+} // FIM CONTEXTO
 
 // LOAD
 
 $(document).ready(function () {
 
-    // LISTAR
-    movimentacoes.listar();
+    function PopupForm(url) {
+        var formDiv = $('<div/>');
+        $.get(url)
+            .done(function (response) {
+                formDiv.html(response);
+
+                Popup = formDiv.dialog({
+                    autoOpen: true,
+                    resizable: false,
+                    title: 'Fill Employee Details',
+                    height: 500,
+                    width: 700,
+                    close: function () {
+                        Popup.dialog('destroy').remove();
+                    }
+
+                });
+            });
+    }
+
+    function SubmitForm(form) {
+        $.validator.unobtrusive.parse(form);
+        if ($(form).valid()) {
+            $.ajax({
+                type: "POST",
+                url: form.action,
+                data: $(form).serialize(),
+                success: function (data) {
+                    if (data.success) {
+                        Popup.dialog('close');
+                        dataTable.ajax.reload();
+
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
+
+                    }
+                }
+            });
+        }
+        return false;
+    }
 
     // Novo
     $("#btnNovoCliente").bind('click', function () {
@@ -437,7 +514,7 @@ $(document).ready(function () {
 
     // Listar
     $("#buscaCliente").click(function () {
-        movimentacoes.listar();
+    //    movimentacoes.listar();
     });
 
     $("#limparCliente").click(function () {

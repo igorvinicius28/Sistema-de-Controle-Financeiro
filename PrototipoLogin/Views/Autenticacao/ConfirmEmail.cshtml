@@ -10,6 +10,7 @@
     <title></title>
     <link href="~/Content/Confirm/fcmoney.confirmacaoEmail.min.css" rel="stylesheet" type="text/css">
     <link href="~/Content/Home/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="shortcut icon" type="image/x-icon" href="~/Content/Img/favicom.png" />
 </head>
 <body>
 
@@ -18,7 +19,6 @@
             <h3 class="signup__status-title mb-3">E-mail confirmado com sucesso.</h3>
 
             <p class="mb-5 text-center text-gray">
-                Obrigado por confirmar seu e-mail.
             </p>
 
             <a class="btn btn-primary btn-user btn-block" href="@Url.Action("Login", "Autenticacao")">Ok, Ir para a tela de login</a>
@@ -31,6 +31,6 @@
 <h2>@ViewBag.Title.</h2>
 <div>
     <p>
-        Obrigado por confirmar seu e-mail. Por favor @Html.ActionLink("Clique aqui para Login", "Login", "Autenticacao", routeValues: null, htmlAttributes: new { id = "loginLink" })
+       Permissao de email realizada! @Html.ActionLink("Clique aqui para Login", "Login", "Autenticacao", routeValues: null, htmlAttributes: new { id = "loginLink" })
     </p>
 </div>

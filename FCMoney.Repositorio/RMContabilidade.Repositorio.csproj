@@ -227,9 +227,9 @@
     <Content Include="Scripts\jquery.validate.min.js" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FCMoney.Dominio\FCMoney.Dominio.csproj">
+    <ProjectReference Include="..\FCMoney.Dominio\RMContabilidade.Dominio.csproj">
       <Project>{CA6590B5-3C52-4E3B-BA18-385535311EAE}</Project>
-      <Name>FCMoney.Dominio</Name>
+      <Name>RMContabilidade.Dominio</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

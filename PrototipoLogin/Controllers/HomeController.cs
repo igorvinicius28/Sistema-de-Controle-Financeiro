@@ -23,7 +23,6 @@ namespace PrototipoLogin.Controllers
         [Authorize]
         public ActionResult Index()
         {
-
             var listaMovimentacoes = _servicoMovimentacao.ConsulteLista();
             var listaContas = _servicoContas.ConsulteLista();
 

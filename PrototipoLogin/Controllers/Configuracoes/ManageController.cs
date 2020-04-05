@@ -18,6 +18,7 @@ namespace PrototipoLogin.Controllers.Configuracoes
     [Authorize]
     public class ManageController : Controller
     {
+        private ApplicationUserManager _userManager;
 
         public ManageController()
         {
@@ -28,7 +29,6 @@ namespace PrototipoLogin.Controllers.Configuracoes
             UserManager = userManager;
         }
 
-        private ApplicationUserManager _userManager;
         public ApplicationUserManager UserManager
         {
             get
@@ -41,8 +41,11 @@ namespace PrototipoLogin.Controllers.Configuracoes
             }
         }
 
-        //
-        // GET: /Account/Index
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
@@ -65,15 +68,20 @@ namespace PrototipoLogin.Controllers.Configuracoes
             return View(model);
         }
 
-        //
-        // GET: /Manage/ChangePassword
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult ChangePassword()
         {
             return View();
         }
 
-        //
-        // POST: /Account/Manage
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(DtoAlteracaoDeSenha model)
@@ -96,6 +104,10 @@ namespace PrototipoLogin.Controllers.Configuracoes
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<ActionResult> DadosPessoais()
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
