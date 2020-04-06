@@ -28,7 +28,7 @@ namespace PrototipoLogin.Identity
 
             if (api == null)
             {
-                Environment.SetEnvironmentVariable("FCMONEY_KEY", "");
+                Environment.SetEnvironmentVariable("FCMONEY_KEY", " ");
 
                 api = Environment.GetEnvironmentVariable("FCMONEY_KEY");
             }
