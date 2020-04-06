@@ -226,7 +226,7 @@ namespace PrototipoLogin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Cadastrar(DtoCadastro model)
         {
-
+            
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, };
@@ -252,7 +252,7 @@ namespace PrototipoLogin.Controllers
                 }
                 AddErrors(result);
             }
-
+            
             // No caso de falha, reexibir a view. 
             return View(model);
         }
